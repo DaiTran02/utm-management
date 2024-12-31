@@ -16,8 +16,8 @@ import org.vaadin.lineawesome.LineAwesomeIconUrl;
 @Menu(order = 0, icon = LineAwesomeIconUrl.GLOBE_SOLID)
 @RolesAllowed("USER")
 public class HelloWorldView extends HorizontalLayout {
-
-    private TextField name;
+	private static final long serialVersionUID = 1L;
+	private TextField name;
     private Button sayHello;
 
     public HelloWorldView() {

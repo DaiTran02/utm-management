@@ -1,32 +1,54 @@
 package com.ngn.utm.manager.security;
 
-import com.ngn.utm.manager.data.User;
-import com.ngn.utm.manager.data.UserRepository;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import java.util.Optional;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.ngn.utm.manager.api.real_tech.authen.ApiUserRealTechModel;
+import com.ngn.utm.manager.utils.SessionUtil;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.spring.security.AuthenticationContext;
+
+import jakarta.servlet.ServletException;
 
 @Component
 public class AuthenticatedUser {
+	 private final AuthenticationContext authenticationContext;
 
-    private final UserRepository userRepository;
-    private final AuthenticationContext authenticationContext;
+	    public AuthenticatedUser(AuthenticationContext authenticationContext) {
+	        this.authenticationContext = authenticationContext;
+	    }
+	    
+	    public Optional<ApiUserRealTechModel> get() {
+	    	Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    	if(principal instanceof UserDetailsCustom) {
+	    		UserDetailsCustom userDetailsCustom= (UserDetailsCustom) principal;
+	        	return Optional.ofNullable(userDetailsCustom.getUser());
+	    	}
+	    	return Optional.empty();
+	    }
 
-    public AuthenticatedUser(AuthenticationContext authenticationContext, UserRepository userRepository) {
-        this.userRepository = userRepository;
-        this.authenticationContext = authenticationContext;
-    }
+	    public void logout() {
+	    	SessionUtil.cleanAllSession();
+	        authenticationContext.logout();
+	    }
 
-    @Transactional
-    public Optional<User> get() {
-        return authenticationContext.getAuthenticatedUser(UserDetails.class)
-                .map(userDetails -> userRepository.findByUsername(userDetails.getUsername()));
-    }
+	    public boolean isAuthenticated() {
+	        VaadinServletRequest request = VaadinServletRequest.getCurrent();
+	        return request != null && request.getUserPrincipal() != null;
+	    }
 
-    public void logout() {
-        authenticationContext.logout();
-    }
-
+	    public boolean authenticate(String username, String password) {
+	        VaadinServletRequest request = VaadinServletRequest.getCurrent();
+	        if (request == null) {
+	            return false;
+	        }
+	        try {
+	            request.login(username, password);
+	            return true;
+	        } catch (ServletException e) {
+	            return false;
+	        }
+	    }
 }

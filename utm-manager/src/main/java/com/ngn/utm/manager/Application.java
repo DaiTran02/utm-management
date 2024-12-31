@@ -15,8 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Theme(value = "utmmanager")
 public class Application implements AppShellConfigurator {
+	private static final long serialVersionUID = 1L;
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 }

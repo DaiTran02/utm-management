@@ -1,6 +1,7 @@
 package com.ngn.utm.manager.views.login;
 
 import com.ngn.utm.manager.security.AuthenticatedUser;
+import com.ngn.utm.manager.service.FormInterface;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -14,12 +15,17 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @AnonymousAllowed
 @PageTitle("Login")
 @Route(value = "login")
-public class LoginView extends LoginOverlay implements BeforeEnterObserver {
-
-    private final AuthenticatedUser authenticatedUser;
+public class LoginView extends LoginOverlay implements BeforeEnterObserver, FormInterface {
+	private static final long serialVersionUID = 1L;
+	
+	private final AuthenticatedUser authenticatedUser;
 
     public LoginView(AuthenticatedUser authenticatedUser) {
-        this.authenticatedUser = authenticatedUser;
+    	this.authenticatedUser = authenticatedUser;
+    	
+    	buildLayout();
+    	configComponent();
+    	
         setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
 
         LoginI18n i18n = LoginI18n.createDefault();
@@ -32,15 +38,40 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver {
         setForgotPasswordButtonVisible(false);
         setOpened(true);
     }
+    
+	@Override
+	public void buildLayout() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void configComponent() {
+		this.addLoginListener(e->{
+			String userName = e.getUsername();
+			String password = e.getPassword();
+			
+			System.out.println(userName + password);
+			
+			authenticate(userName, password);
+		});
+	}
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
-        if (authenticatedUser.get().isPresent()) {
-            // Already logged in
-            setOpened(false);
-            event.forwardTo("");
-        }
+//        if (authenticatedUser.get().isPresent()) {
+//            // Already logged in
+//            setOpened(false);
+//            event.forwardTo("");
+//        }
 
         setError(event.getLocation().getQueryParameters().getParameters().containsKey("error"));
     }
+    
+    private void authenticate(String userName,String password) {
+    	boolean authen = authenticatedUser.authenticate(userName, password);
+    	System.out.println(authen);
+    }
+
+
 }

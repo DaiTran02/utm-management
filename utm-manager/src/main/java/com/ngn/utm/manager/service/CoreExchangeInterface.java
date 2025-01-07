@@ -20,4 +20,5 @@ public interface CoreExchangeInterface {
 	<T,R> T postFile(String path,ParameterizedTypeReference<T> responseType, R mapObject) throws IOException;
 	<T,R> T put(String path,ParameterizedTypeReference<T> responseType,R jsonObject) throws IOException;
 	<T> T delete(String path,ParameterizedTypeReference<T> responseType);
+	<T,R> T authen(String path,ParameterizedTypeReference<T> responseType,R jsonObject) throws IOException;
 }

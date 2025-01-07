@@ -2,6 +2,8 @@ package com.ngn.utm.manager.views.login;
 
 import com.ngn.utm.manager.security.AuthenticatedUser;
 import com.ngn.utm.manager.service.FormInterface;
+import com.ngn.utm.manager.views.realteach.host.HostView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -12,9 +14,10 @@ import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-@AnonymousAllowed
+
 @PageTitle("Login")
 @Route(value = "login")
+@AnonymousAllowed
 public class LoginView extends LoginOverlay implements BeforeEnterObserver, FormInterface {
 	private static final long serialVersionUID = 1L;
 	
@@ -50,10 +53,9 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
 		this.addLoginListener(e->{
 			String userName = e.getUsername();
 			String password = e.getPassword();
-			
-			System.out.println(userName + password);
-			
-			authenticate(userName, password);
+			if(authenticate(userName, password)) {
+				UI.getCurrent().navigate(HostView.class);
+			}
 		});
 	}
 
@@ -68,9 +70,8 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
         setError(event.getLocation().getQueryParameters().getParameters().containsKey("error"));
     }
     
-    private void authenticate(String userName,String password) {
-    	boolean authen = authenticatedUser.authenticate(userName, password);
-    	System.out.println(authen);
+    private boolean authenticate(String userName,String password) {
+    	return authenticatedUser.authenticate(userName, password);
     }
 
 

@@ -1,24 +1,22 @@
 package com.ngn.utm.manager.utils;
 
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class PropUtils implements EnvironmentAware{
-	private static Environment env;
+@Component
+public class PropUtils {
+	private final Environment env;
 	
-	public static Object getProperty(String key) {
-		return env.getProperty(key);
+	public PropUtils(Environment env) {
+		this.env = env;
 	}
 	
-	@Override
-	public void setEnvironment(Environment environment) {
-		env=environment;
-	}
-	
-	public static String getCoreRealTechUrl() {
-		return getProperty("apiUrl").toString();
-	}
+    public String getProperty(String key) {
+        return env.getProperty(key);
+    }
 
+    public String getCoreRealTechUrl() {
+        String apiUrl = getProperty("apiUrl");
+        return apiUrl != null ? apiUrl : "";
+    }
 }

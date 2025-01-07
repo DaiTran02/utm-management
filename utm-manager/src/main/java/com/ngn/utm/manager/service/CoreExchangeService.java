@@ -113,5 +113,12 @@ public class CoreExchangeService extends CoreExchangeAbstract implements CoreExc
 			return e.getResponseBodyAs(responseType);
 		}
 	}
+	
+	@Override
+	public <T, R> T authen(String path, ParameterizedTypeReference<T> responseType, R jsonObject) {
+		String jsonBody = toJson(jsonObject);
+		ResponseEntity<T> response = getRestTemplate().exchange(getBaseUrl()+path,HttpMethod.POST,securityHeaders("",jsonBody), responseType);
+		return response.getBody();
+	}
 
 }

@@ -6,7 +6,7 @@ import lombok.Data;
 public class ApiResultResponse<T> {
 	private int status;
 	private String message;
-	private T result = null;
+	private T data = null;
 	
 	public boolean isSuccess() {
 		if(status == 0) {

@@ -10,8 +10,6 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.internal.RouteUtil;
-import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 
@@ -29,7 +27,7 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
     	buildLayout();
     	configComponent();
     	
-        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
+//        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
 
         LoginI18n i18n = LoginI18n.createDefault();
         i18n.setHeader(new LoginI18n.Header());

@@ -1,14 +1,23 @@
 package com.ngn.utm.manager.views;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.ngn.utm.manager.api.real_tech.authen.ApiUserRealTechModel;
+import com.ngn.utm.manager.security.AuthenticatedUser;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
@@ -24,15 +33,16 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 //@AnonymousAllowed
 public class MainLayout extends AppLayout {
 	private static final long serialVersionUID = 1L;
-
+	private final AuthenticatedUser authenticatedUser;
+	
 	private H1 viewTitle;
 
     @SuppressWarnings("unused")
 	private AccessAnnotationChecker accessChecker;
 
-    public MainLayout( AccessAnnotationChecker accessChecker) {
+    public MainLayout( AccessAnnotationChecker accessChecker,AuthenticatedUser authenticatedUser) {
         this.accessChecker = accessChecker;
-
+        this.authenticatedUser = authenticatedUser;
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
@@ -75,39 +85,36 @@ public class MainLayout extends AppLayout {
 
     private Footer createFooter() {
         Footer layout = new Footer();
-//
-//        Optional<User> maybeUser = authenticatedUser.get();
-//        if (maybeUser.isPresent()) {
-//            User user = maybeUser.get();
-//
-//            Avatar avatar = new Avatar(user.getName());
-//            StreamResource resource = new StreamResource("profile-pic",
-//                    () -> new ByteArrayInputStream(user.getProfilePicture()));
-//            avatar.setImageResource(resource);
-//            avatar.setThemeName("xsmall");
-//            avatar.getElement().setAttribute("tabindex", "-1");
-//
-//            MenuBar userMenu = new MenuBar();
-//            userMenu.setThemeName("tertiary-inline contrast");
-//
-//            MenuItem userName = userMenu.addItem("");
-//            Div div = new Div();
-//            div.add(avatar);
-//            div.add(user.getName());
-//            div.add(new Icon("lumo", "dropdown"));
-//            div.getElement().getStyle().set("display", "flex");
-//            div.getElement().getStyle().set("align-items", "center");
-//            div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
-//            userName.add(div);
-//            userName.getSubMenu().addItem("Sign out", e -> {
-//                authenticatedUser.logout();
-//            });
-//
-//            layout.add(userMenu);
-//        } else {
-//            Anchor loginLink = new Anchor("login", "Sign in");
-//            layout.add(loginLink);
-//        }
+        
+        Optional<ApiUserRealTechModel> maybeUser = authenticatedUser.get();
+        if(maybeUser.isPresent()) {
+        	ApiUserRealTechModel user = maybeUser.get();
+
+               Avatar avatar = new Avatar(user.getUsername());
+               avatar.setThemeName("xsmall");
+               avatar.getElement().setAttribute("tabindex", "-1");
+
+               MenuBar userMenu = new MenuBar();
+               userMenu.setThemeName("tertiary-inline contrast");
+
+               MenuItem userName = userMenu.addItem("");
+               Div div = new Div();
+               div.add(avatar);
+               div.add(user.getUsername());
+               div.add(new Icon("lumo", "dropdown"));
+               div.getElement().getStyle().set("display", "flex");
+               div.getElement().getStyle().set("align-items", "center");
+               div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
+               userName.add(div);
+               userName.getSubMenu().addItem("Sign out", e -> {
+                   authenticatedUser.logout();
+               });
+
+               layout.add(userMenu);
+        }else {
+            Anchor loginLink = new Anchor("login", "Sign in");
+            layout.add(loginLink);
+        }
 
         return layout;
     }

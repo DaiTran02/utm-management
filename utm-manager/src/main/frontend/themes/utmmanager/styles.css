@@ -1,4 +1,6 @@
-@import url('./main-layout.css');    html {
+@import url('./main-layout.css');    
+@import url('./components/dialog_template.css');
+html {
       --lumo-font-size: 1rem;
       --lumo-font-size-xxxl: 1.75rem;
       --lumo-font-size-xxl: 1.375rem;

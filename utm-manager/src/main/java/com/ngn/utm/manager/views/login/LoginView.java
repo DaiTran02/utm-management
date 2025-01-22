@@ -65,7 +65,7 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
 //            event.forwardTo("");
 //        }
 
-        setError(event.getLocation().getQueryParameters().getParameters().containsKey("error"));
+        setError(event.getLocation().getQueryParameters().getParameters().containsKey(""));
     }
     
     private boolean authenticate(String userName,String password) {

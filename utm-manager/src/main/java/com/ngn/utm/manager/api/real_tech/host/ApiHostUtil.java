@@ -36,9 +36,9 @@ public class ApiHostUtil implements ApiHostService{
 	}
 
 	@Override
-	public ApiResultResponse<Object> updateHost(ApiHostModel apiHostModel) {
+	public ApiResultResponse<Object> updateHost(String idHost,ApiHostModel apiHostModel) {
 		CoreExchangeService coreExchangeService = new CoreExchangeService(baseUrlReal);
-		return coreExchangeService.put("/api/private/u/host", new ParameterizedTypeReference<ApiResultResponse<Object>>() {}, apiHostModel);
+		return coreExchangeService.put("/api/private/u/host/"+idHost, new ParameterizedTypeReference<ApiResultResponse<Object>>() {}, apiHostModel);
 	}
 
 	@Override

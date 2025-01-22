@@ -1,10 +1,12 @@
 package com.ngn.utm.manager.views;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 import com.ngn.utm.manager.api.real_tech.authen.ApiUserRealTechModel;
 import com.ngn.utm.manager.security.AuthenticatedUser;
+import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -23,7 +25,6 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import com.vaadin.flow.server.menu.MenuConfiguration;
-import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 /**
@@ -39,6 +40,7 @@ public class MainLayout extends AppLayout {
 
     @SuppressWarnings("unused")
 	private AccessAnnotationChecker accessChecker;
+    private VerticalLayoutTemplate vLayoutNav = new VerticalLayoutTemplate();
 
     public MainLayout( AccessAnnotationChecker accessChecker,AuthenticatedUser authenticatedUser) {
         this.accessChecker = accessChecker;
@@ -63,25 +65,61 @@ public class MainLayout extends AppLayout {
         appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
         Header header = new Header(appName);
 
-        Scroller scroller = new Scroller(createNavigation());
+        Scroller scroller = new Scroller(vLayoutNav);
+        
+        vLayoutNav.setWidthFull();
+        createNavigation();
 
         addToDrawer(header, scroller, createFooter());
     }
-
-    private SideNav createNavigation() {
-        SideNav nav = new SideNav();
-
-        List<MenuEntry> menuEntries = MenuConfiguration.getMenuEntries();
-        menuEntries.forEach(entry -> {
-            if (entry.icon() != null) {
-                nav.addItem(new SideNavItem(entry.title(), entry.path(), new SvgIcon(entry.icon())));
-            } else {
-                nav.addItem(new SideNavItem(entry.title(), entry.path()));
-            }
-        });
-
-        return nav;
+    
+    private void createNavigation() {
+    	vLayoutNav.removeAll();
+    	SideNavItem sideHome = new SideNavItem("Tổng quan", "/dashboard",new SvgIcon(LineAwesomeIconUrl.DASHCUBE));
+    	vLayoutNav.add(sideHome);
+    	
+    	SideNavItem sideHost = new SideNavItem("Thiết bị", "/host",new SvgIcon(LineAwesomeIconUrl.LIST_SOLID));
+    	vLayoutNav.add(sideHost);
+    	
+    	SideNav navConfigModule = new SideNav("Chi tiết thiết bị");
+    	navConfigModule.setCollapsible(true);
+    	SideNavItem itemDevice = new SideNavItem("Tổng quan thiết bị");
+    	navConfigModule.addItem(itemDevice);
+    	
+    	vLayoutNav.add(navConfigModule);
+    	
+    	SideNav navLogModule = new SideNav("Quản lý log");
+    	navLogModule.setCollapsible(true);
+    	SideNavItem item1 = new SideNavItem("Connectivity");
+    	navLogModule.addItem(item1);
+    	
+    	vLayoutNav.add(navLogModule);
+    	
+    	
     }
+
+//    private SideNav createNavigation() {
+//        SideNav nav = new SideNav();
+//        SideNav sideNavConfigModule = new SideNav("Quản lý thiết bị");
+//        
+//        SideNav sideNavLogModule = new SideNav("Quản lý log");
+//
+//        List<MenuEntry> menuEntries = MenuConfiguration.getMenuEntries();
+//        menuEntries.forEach(entry -> {
+//            if (entry.icon() != null) {
+//                nav.addItem(new SideNavItem(entry.title(), entry.path(), new SvgIcon(entry.icon())));
+//            } else {
+//                nav.addItem(new SideNavItem(entry.title(), entry.path()));
+//            }
+//            
+//            System.out.println(entry);
+//            
+//
+//            
+//        });
+//
+//        return nav;
+//    }
 
     private Footer createFooter() {
         Footer layout = new Footer();

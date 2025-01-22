@@ -15,7 +15,7 @@ import jakarta.annotation.security.PermitAll;
 @PermitAll
 @PageTitle("Danh sách thiết bị")
 @Route(value = "host",layout = MainLayout.class)
-@Menu(order = 1, icon = LineAwesomeIconUrl.GLOBE_SOLID)
+@Menu(order = 1, icon = LineAwesomeIconUrl.LIST_SOLID)
 public class HostView extends VerticalLayout{
 	private static final long serialVersionUID = 1L;
 	

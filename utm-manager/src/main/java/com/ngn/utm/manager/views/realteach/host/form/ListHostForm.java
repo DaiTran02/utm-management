@@ -120,8 +120,18 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 	private void openConfirmDeleted(String idHost) {
 		ConfirmDialogTemplate confirmDialogTemplate = new ConfirmDialogTemplate("Xóa thông tin thiết bị");
 		confirmDialogTemplate.setText("Xác nhận xóa thông tin thiết bị");
-		confirmDialogTemplate.open();
+		confirmDialogTemplate.getBtnConfirm().addClickListener(e->{
+			doDelete(idHost);
+		});
 		
+		confirmDialogTemplate.open();
+	}
+	
+	private void doDelete(String idHost) {
+		ApiResultResponse<Object> deleted = apiHostService.deletedHost(idHost);
+		if(deleted.isSuccess()) {
+			loadData();
+		}
 	}
 	
 }

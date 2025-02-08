@@ -12,4 +12,5 @@ public class ApiHostModel {
 	private String clientToken;
 	private boolean useConfigModule;
 	private boolean useLogModule;
+	private boolean isConnect = true;
 }

@@ -1,15 +1,23 @@
 package com.ngn.utm.manager.views;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
+import com.ngn.utm.manager.api.ApiResultResponse;
 import com.ngn.utm.manager.api.real_tech.authen.ApiUserRealTechModel;
+import com.ngn.utm.manager.api.real_tech.host.ApiHostModel;
+import com.ngn.utm.manager.api.real_tech.host.ApiHostService;
 import com.ngn.utm.manager.security.AuthenticatedUser;
+import com.ngn.utm.manager.utils.SessionUtil;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -35,6 +43,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 public class MainLayout extends AppLayout {
 	private static final long serialVersionUID = 1L;
 	private final AuthenticatedUser authenticatedUser;
+	private ApiHostService apiHostService;
+	private ComboBox<Pair<ApiHostModel, String>> cmbDevice = new ComboBox<Pair<ApiHostModel,String>>("Chọn thiết bị");
+	
 	
 	private H1 viewTitle;
 
@@ -42,12 +53,21 @@ public class MainLayout extends AppLayout {
 	private AccessAnnotationChecker accessChecker;
     private VerticalLayoutTemplate vLayoutNav = new VerticalLayoutTemplate();
 
-    public MainLayout( AccessAnnotationChecker accessChecker,AuthenticatedUser authenticatedUser) {
+    public MainLayout( AccessAnnotationChecker accessChecker,AuthenticatedUser authenticatedUser,ApiHostService apiHostService) {
         this.accessChecker = accessChecker;
         this.authenticatedUser = authenticatedUser;
+        this.apiHostService = apiHostService;
         setPrimarySection(Section.DRAWER);
         addDrawerContent();
         addHeaderContent();
+        loadCmbDevice();
+        configComponent();
+    }
+    
+    private void configComponent() {
+    	cmbDevice.addValueChangeListener(e->{
+    		SessionUtil.setDeviceInfo(cmbDevice.getValue().getKey());
+    	});
     }
 
     private void addHeaderContent() {
@@ -70,27 +90,76 @@ public class MainLayout extends AppLayout {
         vLayoutNav.setWidthFull();
         createNavigation();
 
-        addToDrawer(header, scroller, createFooter());
+        addToDrawer(header, cmbDevice, scroller, createFooter());
+    }
+    
+    private void loadCmbDevice() {
+    	List<Pair<ApiHostModel, String>> listDevice = new ArrayList<Pair<ApiHostModel,String>>();
+    	ApiResultResponse<List<ApiHostModel>> dataDevice = apiHostService.getAllHost();
+    	dataDevice.getData().forEach(model->{
+    		listDevice.add(Pair.of(model,model.getHostname()));
+    	});
+    	
+    	cmbDevice.setItems(listDevice);
+    	cmbDevice.setItemLabelGenerator(Pair::getValue);
+    	cmbDevice.setValue(listDevice.get(0));
+    	SessionUtil.setDeviceInfo(cmbDevice.getValue().getKey());
+    	
     }
     
     private void createNavigation() {
     	vLayoutNav.removeAll();
+    	
+    	//Home
+    	
     	SideNavItem sideHome = new SideNavItem("Tổng quan", "/dashboard",new SvgIcon(LineAwesomeIconUrl.DASHCUBE));
+    	sideHome.getStyle().setWidth("100%");
     	vLayoutNav.add(sideHome);
     	
     	SideNavItem sideHost = new SideNavItem("Thiết bị", "/host",new SvgIcon(LineAwesomeIconUrl.LIST_SOLID));
     	vLayoutNav.add(sideHost);
+    	sideHost.getStyle().setWidth("100%");
+    	
+    	//Pfsense
     	
     	SideNav navConfigModule = new SideNav("Chi tiết thiết bị");
+    	navConfigModule.getStyle().setWidth("100%");
     	navConfigModule.setCollapsible(true);
-    	SideNavItem itemDevice = new SideNavItem("Tổng quan thiết bị");
+    	
+    	SideNavItem itemDevice = new SideNavItem("Tổng quan thiết bị","overview_device", new SvgIcon(LineAwesomeIconUrl.DESKTOP_SOLID));
+    	itemDevice.getStyle().setWidth("100%");
     	navConfigModule.addItem(itemDevice);
     	
-    	vLayoutNav.add(navConfigModule);
+    	SideNavItem itemAlias = new SideNavItem("Bí danh","alias",new SvgIcon(LineAwesomeIconUrl.BOOK_SOLID));
+    	itemAlias.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemAlias);
     	
+    	SideNavItem itemRule = new SideNavItem("Rule","rule",new SvgIcon(LineAwesomeIconUrl.BOOK_OPEN_SOLID));
+    	itemRule.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemRule);
+    	
+    	SideNavItem itemService = new SideNavItem("Service","service",new SvgIcon(LineAwesomeIconUrl.FILE_CODE_SOLID));
+    	itemService.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemService);
+    	
+    	SideNavItem itemLog = new SideNavItem("Log","utm_log",new SvgIcon(LineAwesomeIconUrl.HISTORY_SOLID));
+    	itemLog.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemLog);
+    	
+    	SideNavItem itemConfig = new SideNavItem("Config","config",new SvgIcon(LineAwesomeIconUrl.DESKPRO));
+    	itemConfig.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemConfig);
+    	
+    	SideNavItem itemUser = new SideNavItem("User","user",new SvgIcon(LineAwesomeIconUrl.USER));
+    	itemUser.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemUser);
+    	
+    	vLayoutNav.add(navConfigModule);
+    	//LogRealtech
     	SideNav navLogModule = new SideNav("Quản lý log");
     	navLogModule.setCollapsible(true);
     	SideNavItem item1 = new SideNavItem("Connectivity");
+    	item1.getStyle().setWidth("100%");
     	navLogModule.addItem(item1);
     	
     	vLayoutNav.add(navLogModule);

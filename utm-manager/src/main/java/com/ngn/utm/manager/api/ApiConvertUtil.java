@@ -1,6 +1,11 @@
 package com.ngn.utm.manager.api;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.core.ParameterizedTypeReference;
+
+import java.io.IOException;
 import java.lang.reflect.Type;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,8 +47,24 @@ public class ApiConvertUtil {
 		return gson.fromJson(gson.toJson(data), type);
 	}
 	
+	public static <T,I> I jsonToModel(String data, ParameterizedTypeReference<T> responseType) throws Exception{
+		Gson gson = new Gson();
+		return gson.fromJson(data, responseType.getType());
+	}
+	
 	public static <T,I> I jsonToModelList(T data,Type listType) {
 		Gson gson = new Gson();
 		return gson.fromJson(gson.toJson(data), listType);
+	}
+	public static  String modelToJson(Object model)throws Exception{
+		Gson gson = new Gson();
+		return gson.toJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> modelToMap(Object object)throws IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = mapper.readValue(mapper.writeValueAsString(object), HashMap.class);
+		return map;
 	}
 }

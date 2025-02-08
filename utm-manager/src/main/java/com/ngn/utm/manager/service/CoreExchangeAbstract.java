@@ -61,5 +61,4 @@ public class CoreExchangeAbstract {
 		}
 		return mutiValueMap;
 	}
-
 }

@@ -4,6 +4,7 @@ import com.ngn.utm.manager.api.ApiResultResponse;
 import com.ngn.utm.manager.api.real_tech.host.ApiHostModel;
 import com.ngn.utm.manager.api.real_tech.host.ApiHostService;
 import com.ngn.utm.manager.service.FormInterface;
+import com.ngn.utm.manager.utils.commons.NotificationTemplate;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -111,6 +112,8 @@ public class HostEditForm extends VerticalLayoutTemplate implements FormInterfac
 		ApiResultResponse<Object> create = apiHostService.createHost(apiHostModel);
 		if(create.isSuccess()) {
 			fireEvent(new ClickEvent(this, false));
+		}else {
+			NotificationTemplate.warning(create.getMessage());
 		}
 	}
 	

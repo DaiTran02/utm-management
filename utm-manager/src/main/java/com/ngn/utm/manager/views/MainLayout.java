@@ -155,16 +155,43 @@ public class MainLayout extends AppLayout {
     	navConfigModule.addItem(itemUser);
     	
     	vLayoutNav.add(navConfigModule);
+    	
+    	
     	//LogRealtech
     	SideNav navLogModule = new SideNav("Quản lý log");
     	navLogModule.setCollapsible(true);
-    	SideNavItem item1 = new SideNavItem("Connectivity");
-    	item1.getStyle().setWidth("100%");
-    	navLogModule.addItem(item1);
+    	navLogModule.getStyle().setWidth("100%");
+    	
+    	
+    	SideNavItem itemLogConnectivity = new SideNavItem("Connectivity","connectivity",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	itemLogConnectivity.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogConnectivity);
+    	
+    	SideNavItem itemLogIPS = new SideNavItem("IPS","ips",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	itemLogIPS.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogIPS);
+    	
+    	SideNavItem itemLogConfig = new SideNavItem("Configs","config_change",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	itemLogConfig.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogConfig);
+    	
+    	SideNavItem itemLogCreateGroup = new SideNavItem("Create Group","create_group",new SvgIcon(LineAwesomeIconUrl.USER_FRIENDS_SOLID));
+    	itemLogCreateGroup.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogCreateGroup);
+    	
+    	SideNavItem itemLogCreateUser = new SideNavItem("Create User","create_user",new SvgIcon(LineAwesomeIconUrl.USER_ALT_SOLID));
+    	itemLogCreateUser.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogCreateUser);
+    	
+    	SideNavItem itemLogLoginSSH = new SideNavItem("Login SSH","",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	itemLogLoginSSH.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogLoginSSH);
+    	
+    	SideNavItem itemLogLoginWeb = new SideNavItem("Login Web","",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	itemLogLoginWeb.getStyle().setWidth("100%");
+    	navLogModule.addItem(itemLogLoginWeb);
     	
     	vLayoutNav.add(navLogModule);
-    	
-    	
     }
 
 //    private SideNav createNavigation() {

@@ -53,6 +53,8 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
 			String password = e.getPassword();
 			if(authenticate(userName, password)) {
 				UI.getCurrent().navigate(HostView.class);
+			}else {
+				this.setError(true);
 			}
 		});
 	}

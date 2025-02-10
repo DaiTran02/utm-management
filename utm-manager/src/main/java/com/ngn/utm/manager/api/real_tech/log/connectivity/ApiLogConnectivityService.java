@@ -1,0 +1,11 @@
+package com.ngn.utm.manager.api.real_tech.log.connectivity;
+
+import com.ngn.utm.manager.api.ApiResultResponse;
+
+public interface ApiLogConnectivityService {
+	ApiResultResponse<ApiDataLogConnectivityModel> getLogConnectivityByFilter(ApiFilterLogConnectivityModel apiFilterLogConnectivityModel);
+	ApiResultResponse<ApiExportLogConnectivityModel> exportLogConnectivityByFilter(ApiFilterLogConnectivityModel apiFilterLogConnectivityModel);
+	ApiResultResponse<ApiLogConnectivityModel> getLogConnectivityById(String idLog);
+	ApiResultResponse<ApiDataLogConnectiviStaticModel> getLogConnectivityStaticByFilter(ApiFilterLogConnectivityModel apiFilterLogConnectivityModel);
+	ApiResultResponse<ApiExportLogConnectivityModel> exportLogConnectivityStaticByFilter(ApiFilterLogConnectivityModel apiFilterLogConnectivityModel);
+}

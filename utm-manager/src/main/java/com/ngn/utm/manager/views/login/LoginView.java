@@ -4,8 +4,10 @@ import com.ngn.utm.manager.security.AuthenticatedUser;
 import com.ngn.utm.manager.service.FormInterface;
 import com.ngn.utm.manager.views.realteach.host.HostView;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -16,47 +18,66 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @PageTitle("Login")
 @Route(value = "login")
 @AnonymousAllowed
-public class LoginView extends LoginOverlay implements BeforeEnterObserver, FormInterface {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver, FormInterface {
 	private static final long serialVersionUID = 1L;
 	
 	private final AuthenticatedUser authenticatedUser;
+	private Image image = new Image("./icons/logo_realtech.png", "img");
+	
+	private LoginOverlay loginOverlay = new LoginOverlay();
 
     public LoginView(AuthenticatedUser authenticatedUser) {
     	this.authenticatedUser = authenticatedUser;
     	
     	buildLayout();
     	configComponent();
+    	setLocalchange();
     	
 //        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
-
-        LoginI18n i18n = LoginI18n.createDefault();
-        i18n.setHeader(new LoginI18n.Header());
-        i18n.getHeader().setTitle("UTM Manager");
-        i18n.getHeader().setDescription("Login using user/user or admin/admin");
-        i18n.setAdditionalInformation(null);
-        setI18n(i18n);
-
-        setForgotPasswordButtonVisible(false);
-        setOpened(true);
+        
     }
     
 	@Override
 	public void buildLayout() {
-		// TODO Auto-generated method stub
+		this.setSizeFull();
+		this.add(loginOverlay);
 		
+		
+		
+		loginOverlay.setTitle(image);
+		
+		loginOverlay.setForgotPasswordButtonVisible(false);
+		loginOverlay.setOpened(true);
 	}
 
 	@Override
 	public void configComponent() {
-		this.addLoginListener(e->{
+		loginOverlay.addLoginListener(e->{
 			String userName = e.getUsername();
 			String password = e.getPassword();
 			if(authenticate(userName, password)) {
 				UI.getCurrent().navigate(HostView.class);
 			}else {
-				this.setError(true);
+				loginOverlay.setError(true);
 			}
 		});
+	}
+	
+	private void setLocalchange() {
+        LoginI18n i18n = LoginI18n.createDefault();
+        i18n.setHeader(new LoginI18n.Header());
+        i18n.getHeader().setTitle("UTM Manager");
+        i18n.getHeader().setDescription("UTM Manager");
+        i18n.setAdditionalInformation(null);
+        
+        LoginI18n.Form i18nForm = i18n.getForm();
+        i18nForm.setForgotPassword("Quên mật khẩu");
+        i18nForm.setPassword("Mật khẩu");
+        i18nForm.setSubmit("Đăng nhập");
+        i18nForm.setUsername("Tên đăng nhập");
+        i18nForm.setTitle("Đăng nhập");
+        
+        loginOverlay.setI18n(i18n);
 	}
 
     @Override
@@ -67,7 +88,7 @@ public class LoginView extends LoginOverlay implements BeforeEnterObserver, Form
 //            event.forwardTo("");
 //        }
 
-        setError(event.getLocation().getQueryParameters().getParameters().containsKey(""));
+        loginOverlay.setError(event.getLocation().getQueryParameters().getParameters().containsKey(""));
     }
     
     private boolean authenticate(String userName,String password) {

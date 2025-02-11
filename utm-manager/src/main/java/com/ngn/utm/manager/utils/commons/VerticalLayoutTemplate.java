@@ -1,5 +1,6 @@
 package com.ngn.utm.manager.utils.commons;
 
+import com.ngn.utm.manager.utils.MainLayoutUtil;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -10,6 +11,12 @@ public class VerticalLayoutTemplate extends VerticalLayout{
 	
 	public VerticalLayoutTemplate() {
 		
+	}
+	
+	public void refreshMainLayout() {
+		getUI().ifPresent(ui -> ui.access(()->{
+			MainLayoutUtil.getMainLayout().loadCmbDevice();
+		}));
 	}
 	
 	public Registration addChangeListener(ComponentEventListener<ClickEvent> listener) {

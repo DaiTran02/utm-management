@@ -86,6 +86,7 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		HostEditForm hostEditForm = new HostEditForm(apiHostService,null);
 		hostEditForm.addChangeListener(e->{
 			loadData();
+			refreshMainLayout();
 			dialogTemplate.close();
 		});
 		
@@ -104,6 +105,7 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		HostEditForm hostEditForm = new HostEditForm(apiHostService,idHost);
 		hostEditForm.addChangeListener(e->{
 			loadData();
+			refreshMainLayout();
 			dialogTemplate.close();
 		});
 		
@@ -131,6 +133,7 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		ApiResultResponse<Object> deleted = apiHostService.deletedHost(idHost);
 		if(deleted.isSuccess()) {
 			loadData();
+			refreshMainLayout();
 		}
 	}
 	

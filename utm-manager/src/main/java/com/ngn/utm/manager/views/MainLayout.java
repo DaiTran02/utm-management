@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
@@ -45,7 +46,7 @@ public class MainLayout extends AppLayout {
 	private final AuthenticatedUser authenticatedUser;
 	private ApiHostService apiHostService;
 	private ComboBox<Pair<ApiHostModel, String>> cmbDevice = new ComboBox<Pair<ApiHostModel,String>>("Chọn thiết bị");
-	
+	private Image image = new Image("./icons/logo_realtech.png", getCurrentPageTitle());
 	
 	private H1 viewTitle;
 
@@ -62,11 +63,15 @@ public class MainLayout extends AppLayout {
         addHeaderContent();
         loadCmbDevice();
         configComponent();
+        createNavigation();
     }
     
     private void configComponent() {
     	cmbDevice.addValueChangeListener(e->{
-    		SessionUtil.setDeviceInfo(cmbDevice.getValue().getKey());
+    		if(cmbDevice.getValue() != null && cmbDevice.getValue().getKey() != null) {
+    			SessionUtil.setDeviceInfo(cmbDevice.getValue().getKey());
+    		}
+    		createNavigation();
     	});
     }
 
@@ -83,31 +88,48 @@ public class MainLayout extends AppLayout {
     private void addDrawerContent() {
         Span appName = new Span("UTM Manager");
         appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
-        Header header = new Header(appName);
+        
+        image.getStyle().setWidth("100%").setHeight("100%");
+        
+        Header header = new Header(image);
 
         Scroller scroller = new Scroller(vLayoutNav);
         
         vLayoutNav.setWidthFull();
-        createNavigation();
 
         addToDrawer(header, cmbDevice, scroller, createFooter());
     }
     
-    private void loadCmbDevice() {
+    public void loadCmbDevice() {
     	List<Pair<ApiHostModel, String>> listDevice = new ArrayList<Pair<ApiHostModel,String>>();
-    	ApiResultResponse<List<ApiHostModel>> dataDevice = apiHostService.getAllHost();
-    	dataDevice.getData().forEach(model->{
-    		listDevice.add(Pair.of(model,model.getHostname()));
-    	});
+    	
+    	listDevice.add(Pair.of(null,""));
+    	
+    	try {
+    		ApiResultResponse<List<ApiHostModel>> dataDevice = apiHostService.getAllHost();
+        	dataDevice.getData().forEach(model->{
+        		listDevice.add(Pair.of(model,model.getHostname()));
+        	});
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     	
     	cmbDevice.setItems(listDevice);
     	cmbDevice.setItemLabelGenerator(Pair::getValue);
-    	cmbDevice.setValue(listDevice.get(0));
-    	SessionUtil.setDeviceInfo(cmbDevice.getValue().getKey());
-    	
+    	if(SessionUtil.getDeviceInfo() != null) {
+    		listDevice.forEach(model->{
+        		if(model.getKey() != null) {
+        			if(SessionUtil.getDeviceInfo().getId() == model.getKey().getId()) {
+        				cmbDevice.setValue(model);
+        			}
+        		}
+        	});
+    	}else {
+    		cmbDevice.setValue(listDevice.get(0));
+    	}
     }
     
-    private void createNavigation() {
+    public void createNavigation() {
     	vLayoutNav.removeAll();
     	
     	//Home
@@ -183,13 +205,30 @@ public class MainLayout extends AppLayout {
     	itemLogCreateUser.getStyle().setWidth("100%");
     	navLogModule.addItem(itemLogCreateUser);
     	
-    	SideNavItem itemLogLoginSSH = new SideNavItem("Login SSH","",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	SideNavItem itemLogLoginSSH = new SideNavItem("Login SSH","login_ssh",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
     	itemLogLoginSSH.getStyle().setWidth("100%");
     	navLogModule.addItem(itemLogLoginSSH);
     	
-    	SideNavItem itemLogLoginWeb = new SideNavItem("Login Web","",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
+    	SideNavItem itemLogLoginWeb = new SideNavItem("Login Web","login_web",new SvgIcon(LineAwesomeIconUrl.FILE_ALT));
     	itemLogLoginWeb.getStyle().setWidth("100%");
     	navLogModule.addItem(itemLogLoginWeb);
+    	
+    	navConfigModule.setVisible(false);
+    	navLogModule.setVisible(false);
+    	
+    	if(cmbDevice.getValue().getKey() != null && SessionUtil.getDeviceInfo() != null) {
+    		if(SessionUtil.getDeviceInfo().isUseConfigModule()) {
+        		navConfigModule.setVisible(true);
+        	}else {
+        		navConfigModule.setVisible(false);
+        	}
+        	
+        	if(SessionUtil.getDeviceInfo().isUseLogModule()) {
+        		navLogModule.setVisible(true);
+        	}else {
+        		navLogModule.setVisible(false);
+        	}
+    	}
     	
     	vLayoutNav.add(navLogModule);
     }
@@ -234,13 +273,13 @@ public class MainLayout extends AppLayout {
                MenuItem userName = userMenu.addItem("");
                Div div = new Div();
                div.add(avatar);
-               div.add(user.getUsername());
+               div.add("Tài khoản: "+user.getUsername());
                div.add(new Icon("lumo", "dropdown"));
                div.getElement().getStyle().set("display", "flex");
                div.getElement().getStyle().set("align-items", "center");
                div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
                userName.add(div);
-               userName.getSubMenu().addItem("Sign out", e -> {
+               userName.getSubMenu().addItem("Đăng xuất", e -> {
                    authenticatedUser.logout();
                });
 

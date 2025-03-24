@@ -22,24 +22,24 @@ public class ApiUserUtil implements ApiUserSerivce{
 	}
 
 	@Override
-	public ApiResultPfsenseResponse<Object> createUser(ApiUtmUserModel apiUtmUserModel) throws Exception {
+	public ApiResultPfsenseResponse<Object> createUser(ApiUtmUserInputModel apiUtmUserModel) throws Exception {
 		String uri = SessionUtil.getDeviceInfo() == null ? "" : url+ SessionUtil.getDeviceInfo().getIpAddress();
 		CoreExchangePfsenseService coreExchangePfsenseService = new CoreExchangePfsenseService();
-		return coreExchangePfsenseService.get(uri+"/api/v1/user", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
+		return coreExchangePfsenseService.postUseFormData(uri+"/api/v1/user", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()),apiUtmUserModel, new ParameterizedTypeReference<>() {});
 	}
 
 	@Override
-	public ApiResultPfsenseResponse<Object> updateUser(ApiUtmUserModel apiUtmUserModel) throws Exception {
+	public ApiResultPfsenseResponse<Object> updateUser(ApiUtmUserInputModel apiUtmUserModel) throws Exception {
 		String uri = SessionUtil.getDeviceInfo() == null ? "" : url+ SessionUtil.getDeviceInfo().getIpAddress();
 		CoreExchangePfsenseService coreExchangePfsenseService = new CoreExchangePfsenseService();
-		return coreExchangePfsenseService.get(uri+"/api/v1/user", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
+		return coreExchangePfsenseService.putUseFormData(uri+"/api/v1/user", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()),apiUtmUserModel, new ParameterizedTypeReference<>() {});
 	}
 
 	@Override
 	public ApiResultPfsenseResponse<Object> deleteUser(String idUser) throws Exception {
 		String uri = SessionUtil.getDeviceInfo() == null ? "" : url+ SessionUtil.getDeviceInfo().getIpAddress();
 		CoreExchangePfsenseService coreExchangePfsenseService = new CoreExchangePfsenseService();
-		return coreExchangePfsenseService.get(uri+"/api/v1/user?username="+idUser, new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
+		return coreExchangePfsenseService.delete(uri+"/api/v1/user?username="+idUser, new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
 	}
 
 }

@@ -1,5 +1,10 @@
 package com.ngn.utm.manager.utils.commons;
 
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.ngn.utm.manager.api.real_tech.host.ApiHostModel;
 import com.ngn.utm.manager.utils.MainLayoutUtil;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -14,8 +19,12 @@ public class VerticalLayoutTemplate extends VerticalLayout{
 	}
 	
 	public void refreshMainLayout() {
+	}
+	
+	public void refreshListDevice(List<Pair<ApiHostModel, String>> listDevice,ApiHostModel apiHostModel) {
 		getUI().ifPresent(ui -> ui.access(()->{
-			MainLayoutUtil.getMainLayout().loadCmbDevice();
+			MainLayoutUtil.getMainLayout().loadNewDevices(listDevice,apiHostModel);
+			System.out.println("Alo 2");
 		}));
 	}
 	

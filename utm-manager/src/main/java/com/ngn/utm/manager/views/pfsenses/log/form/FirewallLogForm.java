@@ -8,6 +8,8 @@ import com.ngn.utm.manager.api.pfsenses.logs.ApiLogPfsenseModel;
 import com.ngn.utm.manager.api.pfsenses.logs.ApiLogService;
 import com.ngn.utm.manager.service.FormInterface;
 import com.ngn.utm.manager.utils.ParsingStringUtil;
+import com.ngn.utm.manager.utils.SessionUtil;
+import com.ngn.utm.manager.utils.commons.CantConnectToPfsenseForm;
 import com.ngn.utm.manager.views.pfsenses.log.model.ModelParsingLog;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,8 +18,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class FirewallLogForm extends VerticalLayout implements FormInterface{
 	private static final long serialVersionUID = 1L;
-	
 	private ApiLogService apiLogService;
+	private boolean isConnect = SessionUtil.getDeviceInfo().isConnect();
+	
 	private List<ApiLogPfsenseModel> listModel = new ArrayList<ApiLogPfsenseModel>();
 	
 	private Grid<ModelParsingLog> grid = new Grid<ModelParsingLog>(ModelParsingLog.class,false);
@@ -43,27 +46,33 @@ public class FirewallLogForm extends VerticalLayout implements FormInterface{
 	public void loadData() {
 		listModel = new ArrayList<ApiLogPfsenseModel>();
 		listDataForGrid = new ArrayList<ModelParsingLog>();
-		try {
-			for(String itemLog : apiLogService.readFirewallLog().getData()) {
-				ApiLogPfsenseModel log = new ApiLogPfsenseModel();
-				log.setLogSystem(itemLog);
-				listModel.add(log);
+		if(isConnect) {
+			try {
+				for(String itemLog : apiLogService.readFirewallLog().getData()) {
+					ApiLogPfsenseModel log = new ApiLogPfsenseModel();
+					log.setLogSystem(itemLog);
+					listModel.add(log);
+				}
+			} catch (Exception e) {
 			}
-		} catch (Exception e) {
-		}
-		
-		for(ApiLogPfsenseModel logModel : listModel) {
-			Optional<List<String>> data = ParsingStringUtil.parsingSystemLog(logModel.getLogSystem());
-			if(data.isPresent()) {
-				List<String> rowData = data.get();
-				ModelParsingLog modelParsingLog = new ModelParsingLog();
-				modelParsingLog.setSt1(rowData.get(1));
-				modelParsingLog.setSt2(rowData.get(3));
-				modelParsingLog.setSt3(rowData.get(4));
-				modelParsingLog.setSt4(rowData.get(5));
-				
-				listDataForGrid.add(modelParsingLog);
+			
+			for(ApiLogPfsenseModel logModel : listModel) {
+				Optional<List<String>> data = ParsingStringUtil.parsingSystemLog(logModel.getLogSystem());
+				if(data.isPresent()) {
+					List<String> rowData = data.get();
+					ModelParsingLog modelParsingLog = new ModelParsingLog();
+					modelParsingLog.setSt1(rowData.get(1));
+					modelParsingLog.setSt2(rowData.get(3));
+					modelParsingLog.setSt3(rowData.get(4));
+					modelParsingLog.setSt4(rowData.get(5));
+					
+					listDataForGrid.add(modelParsingLog);
+				}
 			}
+		}else {
+			this.removeAll();
+			CantConnectToPfsenseForm cantConnectToPfsenseForm = new CantConnectToPfsenseForm();
+			this.add(cantConnectToPfsenseForm);
 		}
 		
 		grid.setItems(listDataForGrid);

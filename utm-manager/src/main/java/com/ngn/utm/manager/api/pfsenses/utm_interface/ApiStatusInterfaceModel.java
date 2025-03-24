@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ApiReadInterfaceModel {
+public class ApiStatusInterfaceModel {
     private String name;
     private String descr;
     private String hwif;

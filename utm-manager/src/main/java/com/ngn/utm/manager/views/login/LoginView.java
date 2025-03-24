@@ -20,32 +20,68 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver, FormInterface {
 	private static final long serialVersionUID = 1L;
-	
-	private final AuthenticatedUser authenticatedUser;
-	private Image image = new Image("./icons/logo_realtech.png", "img");
-	
-	private LoginOverlay loginOverlay = new LoginOverlay();
 
-    public LoginView(AuthenticatedUser authenticatedUser) {
-    	this.authenticatedUser = authenticatedUser;
-    	
-    	buildLayout();
-    	configComponent();
-    	setLocalchange();
-    	
-//        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
-        
-    }
-    
+	private final AuthenticatedUser authenticatedUser;
+
+	private LoginOverlay loginOverlay = new LoginOverlay();
+	
+
+	public LoginView(AuthenticatedUser authenticatedUser) {
+		this.authenticatedUser = authenticatedUser;
+
+		buildLayout();
+		configComponent();
+		setLocalchange();
+
+		//        setAction(RouteUtil.getRoutePath(VaadinService.getCurrent().getContext(), getClass()));
+
+	}
+
 	@Override
 	public void buildLayout() {
 		this.setSizeFull();
 		this.add(loginOverlay);
+
+		Image image = new Image("./themes/favicon/logo.png", "img");
+		image.getStyle().setMarginLeft("10px");
 		
 		
+//		Div div = new Div();
+//		div.setId("id_login");
 		
+		loginOverlay.setId("id_login");
+		
+//		Html html = new Html("<script>"
+//			+ "VANTA.NET({ "
+//			+ "  el: '#id_login', "
+//			+ "  mouseControls: true, "
+//			+ "  touchControls: true, "
+//			+ "  gyroControls: false, "
+//			+ "  minHeight: 200.00, "
+//			+ "  minWidth: 200.00, "
+//			+ "  scale: 1.00, "
+//			+ "  scaleMobile: 1.00 "
+//			+ "});"
+//			+ "</script>");
+//		this.add(html);
+		
+//		UI.getCurrent().getPage().executeJs(
+//			    "setTimeout(() => { " +
+//			    "  VANTA.NET({ " +
+//			    "    el: document.querySelector('vaadin-login-overlay-wrapper'), " + // Chọn phần tử đúng
+//			    "    mouseControls: true, " +
+//			    "    touchControls: true, " +
+//			    "    gyroControls: false, " +
+//			    "    minHeight: 200.00, " +
+//			    "    minWidth: 200.00, " +
+//			    "    scale: 1.00, " +
+//			    "    scaleMobile: 1.00 " +
+//			    "  });" +
+//			    "}, 1000);"
+//			);
+
+
 		loginOverlay.setTitle(image);
-		
 		loginOverlay.setForgotPasswordButtonVisible(false);
 		loginOverlay.setOpened(true);
 	}
@@ -62,38 +98,38 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver, Fo
 			}
 		});
 	}
-	
+
 	private void setLocalchange() {
-        LoginI18n i18n = LoginI18n.createDefault();
-        i18n.setHeader(new LoginI18n.Header());
-        i18n.getHeader().setTitle("UTM Manager");
-        i18n.getHeader().setDescription("UTM Manager");
-        i18n.setAdditionalInformation(null);
-        
-        LoginI18n.Form i18nForm = i18n.getForm();
-        i18nForm.setForgotPassword("Quên mật khẩu");
-        i18nForm.setPassword("Mật khẩu");
-        i18nForm.setSubmit("Đăng nhập");
-        i18nForm.setUsername("Tên đăng nhập");
-        i18nForm.setTitle("Đăng nhập");
-        
-        loginOverlay.setI18n(i18n);
+		LoginI18n i18n = LoginI18n.createDefault();
+		i18n.setHeader(new LoginI18n.Header());
+		i18n.getHeader().setTitle("UTM Manager");
+		i18n.getHeader().setDescription("UTM Manager");
+		i18n.setAdditionalInformation(null);
+
+		LoginI18n.Form i18nForm = i18n.getForm();
+		i18nForm.setForgotPassword("Quên mật khẩu");
+		i18nForm.setPassword("Mật khẩu");
+		i18nForm.setSubmit("Đăng nhập");
+		i18nForm.setUsername("Tên đăng nhập");
+		i18nForm.setTitle("Đăng nhập");
+
+		loginOverlay.setI18n(i18n);
 	}
 
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-//        if (authenticatedUser.get().isPresent()) {
-//            // Already logged in
-//            setOpened(false);
-//            event.forwardTo("");
-//        }
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		//        if (authenticatedUser.get().isPresent()) {
+		//            // Already logged in
+		//            setOpened(false);
+		//            event.forwardTo("");
+		//        }
 
-        loginOverlay.setError(event.getLocation().getQueryParameters().getParameters().containsKey(""));
-    }
-    
-    private boolean authenticate(String userName,String password) {
-    	return authenticatedUser.authenticate(userName, password);
-    }
+		loginOverlay.setError(event.getLocation().getQueryParameters().getParameters().containsKey(""));
+	}
+
+	private boolean authenticate(String userName,String password) {
+		return authenticatedUser.authenticate(userName, password);
+	}
 
 
 }

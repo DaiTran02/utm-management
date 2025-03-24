@@ -94,6 +94,11 @@
 			<optional>true</optional>
 		</dependency>
 
+	    <dependency>
+	        <groupId>com.nimbusds</groupId>
+	        <artifactId>nimbus-jose-jwt</artifactId>
+	        <version>9.31</version> <!-- Kiểm tra phiên bản mới nhất -->
+	    </dependency>
     </dependencies>
 
     <build>

@@ -6,10 +6,10 @@ import lombok.Data;
 
 @Data
 public class ApiCreateAndUpdateAliasModel {
-	private List<Object> address;
+	private List<String> address;
 	private boolean apply;
 	private String descr;
-	private List<Object> detail;
+	private List<String> detail;
 	private String name;
 	private String type;
 	private String id;

@@ -100,7 +100,7 @@ public class MainLayout extends AppLayout {
         addToDrawer(header, cmbDevice, scroller, createFooter());
     }
     
-    public void loadCmbDevice() {
+    private void loadCmbDevice() {
     	List<Pair<ApiHostModel, String>> listDevice = new ArrayList<Pair<ApiHostModel,String>>();
     	
     	listDevice.add(Pair.of(null,""));
@@ -111,22 +111,50 @@ public class MainLayout extends AppLayout {
         		listDevice.add(Pair.of(model,model.getHostname()));
         	});
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
     	
     	cmbDevice.setItems(listDevice);
     	cmbDevice.setItemLabelGenerator(Pair::getValue);
-    	if(SessionUtil.getDeviceInfo() != null) {
-    		listDevice.forEach(model->{
-        		if(model.getKey() != null) {
-        			if(SessionUtil.getDeviceInfo().getId() == model.getKey().getId()) {
-        				cmbDevice.setValue(model);
-        			}
-        		}
-        	});
+    	if(listDevice.size() > 1) {
+    		cmbDevice.setValue(listDevice.get(1));
+    		SessionUtil.setDeviceInfo(listDevice.get(1).getKey());
     	}else {
     		cmbDevice.setValue(listDevice.get(0));
     	}
+
+    }
+    
+    public void loadNewDevices(List<Pair<ApiHostModel, String>> listNewDevice,ApiHostModel apiHostModel) {
+    	System.out.println("Alo 3");
+    	cmbDevice.setItems(listNewDevice);
+    	cmbDevice.setItemLabelGenerator(Pair::getValue);
+    	
+    	System.out.println(SessionUtil.getDeviceInfo());
+    	
+    	if(apiHostModel != null) {
+    		if(listNewDevice.size() > 1) {
+        		cmbDevice.setValue(listNewDevice.get(1));
+        	}else {
+        		cmbDevice.setValue(listNewDevice.get(0));
+        	}
+    		listNewDevice.stream().filter(model->{
+    			if(model.getKey() != null) {
+    				return model.getKey().getId() == apiHostModel.getId();
+    			}
+    			return false;
+    		}).findFirst().ifPresent(e->{
+    			cmbDevice.setValue(e);
+    		});
+
+    	}else {
+    		if(listNewDevice.size() > 1) {
+        		cmbDevice.setValue(listNewDevice.get(1));
+        	}else {
+        		cmbDevice.setValue(listNewDevice.get(0));
+        	}
+    	}
+    	createNavigation();
     }
     
     public void createNavigation() {
@@ -136,9 +164,9 @@ public class MainLayout extends AppLayout {
     	
     	SideNavItem sideHome = new SideNavItem("Tổng quan", "/dashboard",new SvgIcon(LineAwesomeIconUrl.DASHCUBE));
     	sideHome.getStyle().setWidth("100%");
-    	vLayoutNav.add(sideHome);
+//    	vLayoutNav.add(sideHome);
     	
-    	SideNavItem sideHost = new SideNavItem("Thiết bị", "/host",new SvgIcon(LineAwesomeIconUrl.LIST_SOLID));
+    	SideNavItem sideHost = new SideNavItem("Quản lý thiết bị", "/host",new SvgIcon(LineAwesomeIconUrl.LIST_SOLID));
     	vLayoutNav.add(sideHost);
     	sideHost.getStyle().setWidth("100%");
     	
@@ -151,6 +179,10 @@ public class MainLayout extends AppLayout {
     	SideNavItem itemDevice = new SideNavItem("Tổng quan thiết bị","overview_device", new SvgIcon(LineAwesomeIconUrl.DESKTOP_SOLID));
     	itemDevice.getStyle().setWidth("100%");
     	navConfigModule.addItem(itemDevice);
+    	
+    	SideNavItem itemVPN = new SideNavItem("VPN", "vpn",new SvgIcon(LineAwesomeIconUrl.NETWORK_WIRED_SOLID));
+    	itemVPN.getStyle().setWidth("100%");
+    	navConfigModule.addItem(itemVPN);
     	
     	SideNavItem itemAlias = new SideNavItem("Bí danh","alias",new SvgIcon(LineAwesomeIconUrl.BOOK_SOLID));
     	itemAlias.getStyle().setWidth("100%");
@@ -216,18 +248,20 @@ public class MainLayout extends AppLayout {
     	navConfigModule.setVisible(false);
     	navLogModule.setVisible(false);
     	
-    	if(cmbDevice.getValue().getKey() != null && SessionUtil.getDeviceInfo() != null) {
-    		if(SessionUtil.getDeviceInfo().isUseConfigModule()) {
-        		navConfigModule.setVisible(true);
-        	}else {
-        		navConfigModule.setVisible(false);
-        	}
-        	
-        	if(SessionUtil.getDeviceInfo().isUseLogModule()) {
-        		navLogModule.setVisible(true);
-        	}else {
-        		navLogModule.setVisible(false);
-        	}
+    	
+    	if(cmbDevice.getValue() != null && cmbDevice.getValue().getKey() != null) {
+    		if(cmbDevice.getValue().getKey().isUseConfigModule()) {
+    			navConfigModule.setVisible(true);
+    		}else {
+    			navConfigModule.setVisible(false);
+    		}
+    		
+    		if(cmbDevice.getValue().getKey().isUseLogModule()) {
+    			navLogModule.setVisible(true);
+    		}else {
+    			navLogModule.setVisible(false);
+    		}
+    		
     	}
     	
     	vLayoutNav.add(navLogModule);

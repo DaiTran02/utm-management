@@ -12,6 +12,7 @@ import com.ngn.utm.manager.service.FormInterface;
 import com.ngn.utm.manager.utils.LocalDateUtil;
 import com.ngn.utm.manager.utils.SessionUtil;
 import com.ngn.utm.manager.utils.commons.ButtonTemplate;
+import com.ngn.utm.manager.utils.commons.CantConnectToPfsenseForm;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -47,13 +48,17 @@ public class ConfigForm extends VerticalLayout implements FormInterface{
 	
 	private void loadData() {
 		listModel = new ArrayList<ApiConfigModel>();
-		try {
-			ApiResultResponse<List<ApiConfigModel>> data = apiConfigService.getConfig(SessionUtil.getDeviceInfo().getId());
-			if(data.isSuccess()) {
-				listModel.addAll(data.getData());
+			try {
+				ApiResultResponse<List<ApiConfigModel>> data = apiConfigService.getConfig(SessionUtil.getDeviceInfo().getId());
+				if(data.isSuccess()) {
+					listModel.addAll(data.getData());
+				}
+			} catch (Exception e) {
+				this.removeAll();
+				CantConnectToPfsenseForm cantConnectToPfsenseForm = new CantConnectToPfsenseForm();
+				this.add(cantConnectToPfsenseForm);
 			}
-		} catch (Exception e) {
-		}
+
 		grid.setItems(listModel);
 	}
 	

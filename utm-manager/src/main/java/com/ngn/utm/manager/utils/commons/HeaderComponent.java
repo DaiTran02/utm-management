@@ -37,5 +37,9 @@ public class HeaderComponent extends VerticalLayoutTemplate implements FormInter
 	public void addLayout(Component component) {
 		vLayout.add(component);
 	}
+	
+	public void removeAllLayout() {
+		vLayout.removeAll();
+	}
 
 }

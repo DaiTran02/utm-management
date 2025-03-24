@@ -26,7 +26,7 @@ public class ApiAliasUtil implements ApiAliasService{
 	public ApiResultPfsenseResponse<Object> deleteFirewallAlias(String idAlies) throws Exception {
 		String uri = SessionUtil.getDeviceInfo() == null ? "" : url+ SessionUtil.getDeviceInfo().getIpAddress();
 		CoreExchangePfsenseService coreExchangePfsenseService = new CoreExchangePfsenseService();
-		return coreExchangePfsenseService.delete(uri+"/api/v1/firewall/alias?id=123&apply=true", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
+		return coreExchangePfsenseService.delete(uri+"/api/v1/firewall/alias?id="+idAlies+"&apply=true", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), new ParameterizedTypeReference<>() {});
 	}
 
 	@Override

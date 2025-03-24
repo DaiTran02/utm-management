@@ -3,15 +3,18 @@ package com.ngn.utm.manager.views.realteach.host.form;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.vaadin.lineawesome.LineAwesomeIconUrl;
 
 import com.ngn.utm.manager.api.ApiResultResponse;
 import com.ngn.utm.manager.api.real_tech.host.ApiHostModel;
 import com.ngn.utm.manager.api.real_tech.host.ApiHostService;
 import com.ngn.utm.manager.service.FormInterface;
+import com.ngn.utm.manager.utils.SessionUtil;
 import com.ngn.utm.manager.utils.commons.ButtonTemplate;
 import com.ngn.utm.manager.utils.commons.ConfirmDialogTemplate;
 import com.ngn.utm.manager.utils.commons.DialogTemplate;
+import com.ngn.utm.manager.utils.commons.NotificationTemplate;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -86,7 +89,8 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		HostEditForm hostEditForm = new HostEditForm(apiHostService,null);
 		hostEditForm.addChangeListener(e->{
 			loadData();
-			refreshMainLayout();
+			refresh();
+			NotificationTemplate.success("Thiết bị mới đã được thêm vào quản lý");
 			dialogTemplate.close();
 		});
 		
@@ -105,7 +109,7 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		HostEditForm hostEditForm = new HostEditForm(apiHostService,idHost);
 		hostEditForm.addChangeListener(e->{
 			loadData();
-			refreshMainLayout();
+			refresh();
 			dialogTemplate.close();
 		});
 		
@@ -133,8 +137,21 @@ public class ListHostForm extends VerticalLayoutTemplate implements FormInterfac
 		ApiResultResponse<Object> deleted = apiHostService.deletedHost(idHost);
 		if(deleted.isSuccess()) {
 			loadData();
-			refreshMainLayout();
+			NotificationTemplate.warning("Đã xóa thiết bị");
+			refresh();
 		}
+	}
+	
+	private void refresh() {
+		List<Pair<ApiHostModel, String>> listDevice = new ArrayList<Pair<ApiHostModel,String>>();
+		listDevice.add(Pair.of(null,""));
+		for(ApiHostModel apiHostModel : listHostModel) {
+			listDevice.add(Pair.of(apiHostModel,apiHostModel.getHostname()));
+		}
+		
+		System.out.println("Alo 1");
+		
+		refreshListDevice(listDevice,SessionUtil.getDeviceInfo());
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.ngn.utm.manager.api.pfsenses.openvpn;
+package com.ngn.utm.manager.api.pfsenses.vpn;
 
 import java.util.List;
 

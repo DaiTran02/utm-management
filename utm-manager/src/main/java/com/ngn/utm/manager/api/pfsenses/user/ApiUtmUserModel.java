@@ -1,5 +1,7 @@
 package com.ngn.utm.manager.api.pfsenses.user;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -17,4 +19,6 @@ public class ApiUtmUserModel {
     private Boolean disabled;
     private String password;
     private String username;
+    private List<Object> cert;
+    private List<Object> priv;
 }

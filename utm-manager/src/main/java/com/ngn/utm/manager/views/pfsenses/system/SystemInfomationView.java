@@ -1,6 +1,8 @@
 package com.ngn.utm.manager.views.pfsenses.system;
 
 import com.ngn.utm.manager.api.pfsenses.system.ApiSystemService;
+import com.ngn.utm.manager.api.pfsenses.utm_interface.ApiInterfaceService;
+import com.ngn.utm.manager.api.pfsenses.vpn.ApiVPNService;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.ngn.utm.manager.views.MainLayout;
 import com.ngn.utm.manager.views.pfsenses.system.forms.OverviewDeviceForm;
@@ -15,9 +17,9 @@ import jakarta.annotation.security.PermitAll;
 public class SystemInfomationView extends VerticalLayoutTemplate{
 	private static final long serialVersionUID = 1L;
 	
-	public SystemInfomationView(ApiSystemService apiSystemService) {
+	public SystemInfomationView(ApiSystemService apiSystemService,ApiInterfaceService apiInterfaceService,ApiVPNService apiVPNService) {
 		this.setPadding(false);
-		OverviewDeviceForm systemStatusForm = new OverviewDeviceForm(apiSystemService);
+		OverviewDeviceForm systemStatusForm = new OverviewDeviceForm(apiSystemService,apiInterfaceService,apiVPNService);
 		this.add(systemStatusForm);
 	}
 

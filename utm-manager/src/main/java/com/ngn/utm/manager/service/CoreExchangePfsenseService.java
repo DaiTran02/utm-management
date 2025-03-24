@@ -1,6 +1,7 @@
 package com.ngn.utm.manager.service;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -52,7 +53,13 @@ public class CoreExchangePfsenseService{
 	public  <T> T postUseFormData (String url,ApiAuthenticationPfsenseModel ApiAuthenticationPfsenseModel,Object object,ParameterizedTypeReference<T> responseType) throws Exception{
 		OkHttpClient okHttpClient = OkhttpClientCustom.getUnsafeOkHttpClient();
 		Map<String, Object> map = ApiConvertUtil.modelToMap(object);
-		JSONObject jsonObject = new JSONObject(map);
+		
+		if(map == null) {
+			map = new HashMap<String, Object>();
+		}
+		
+		JSONObject jsonObject = new JSONObject(map);;
+		
 		RequestBody requestBody = new RequestBody() {
 			@Override
 			public MediaType contentType() {

@@ -36,10 +36,10 @@ public class ApiServiceOfUtmUtil implements ApiServiceOfUtmService{
 	}
 
 	@Override
-	public ApiResultPfsenseResponse<Object> stopService(ApiServiceOfUtmModel apiServiceOfUtmModel) throws Exception {
+	public ApiResultPfsenseResponse<Object> stopService() throws Exception {
 		String uri = SessionUtil.getDeviceInfo() == null ? "" : url+ SessionUtil.getDeviceInfo().getIpAddress();
 		CoreExchangePfsenseService coreExchangePfsenseService = new CoreExchangePfsenseService();
-		return coreExchangePfsenseService.postUseFormData(uri+"/api/v1/services/stop", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), apiServiceOfUtmModel, new ParameterizedTypeReference<>() {});
+		return coreExchangePfsenseService.postUseFormData(uri+"/api/v1/services/stop", new ApiAuthenticationPfsenseModel(SessionUtil.getDeviceInfo()), null, new ParameterizedTypeReference<>() {});
 	}
 
 }

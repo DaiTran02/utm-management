@@ -9,11 +9,14 @@ import com.ngn.utm.manager.api.pfsenses.system.ApiReadSystemVersionModel;
 import com.ngn.utm.manager.service.FormInterface;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H5;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class SystemInformationForm extends VerticalLayoutTemplate implements FormInterface{
 	private static final long serialVersionUID = 1L;
@@ -73,6 +76,80 @@ public class SystemInformationForm extends VerticalLayoutTemplate implements For
 				createKeyValue("CPU Type: ", apiReadSystemStatusModel.getCpu_model(), width, true),headerHardware, new Hr(),
 				createKeyValue("Kernrl PTI: ", apiReadSystemStatusModel.isKernel_pti() == false ? "Enabled" : "Disabled", width, true),
 				createKeyValue("MDS Mitigation: ", apiReadSystemStatusModel.getMds_mitigation(), width, true));
+		
+		
+		// Disk used
+		Div divDiskUsage = new Div();
+		ProgressBar progressBarDiskUsage = new ProgressBar();
+		progressBarDiskUsage.setValue(apiReadSystemStatusModel.getDisk_usage());
+		progressBarDiskUsage.setHeight("10px");
+		
+		Span progressBarSubLabelDiskUsage = new Span(apiReadSystemStatusModel.getDisk_usage()*100+"%");
+		progressBarSubLabelDiskUsage.setId("disk");
+		progressBarSubLabelDiskUsage.addClassNames(LumoUtility.TextColor.SECONDARY);
+		
+		progressBarDiskUsage.getElement().setAttribute("aria-describedby", "disk");
+		
+		divDiskUsage.setWidthFull();
+		divDiskUsage.add(progressBarDiskUsage,progressBarSubLabelDiskUsage);
+		
+		
+		vLayout.add(createKeyComponent("Disk usage: ", divDiskUsage, width, true));
+		
+		
+		// Swap Use
+		Div divSwapUsage = new Div();
+		ProgressBar progressBarSwapUsage = new ProgressBar();
+		progressBarSwapUsage.setValue(0);
+		progressBarSwapUsage.setHeight("10px");
+		
+		Span progressBarSubLabelSwap = new Span(apiReadSystemStatusModel.getSwap_usage()+"% of 1024");
+		progressBarSubLabelSwap.setId("sublbl");
+		progressBarSubLabelSwap.addClassNames(LumoUtility.TextColor.SECONDARY);
+		
+		progressBarSwapUsage.getElement().setAttribute("aria-describedby", "sublbl");
+		
+		divSwapUsage.setWidthFull();
+		divSwapUsage.add(progressBarSwapUsage,progressBarSubLabelSwap);
+		
+		vLayout.add(createKeyComponent("SWAP usage: ", divSwapUsage, width, true));
+		
+		//MBUF
+		Div divMBUFUsage = new Div();
+		ProgressBar progressBarMBUF = new ProgressBar();
+		progressBarMBUF.setValue(apiReadSystemStatusModel.getMbuf_usage());
+		progressBarMBUF.setHeight("10px");
+		
+		Span progressBarSubLabelMBUF = new Span(apiReadSystemStatusModel.getMbuf_usage()*100+"%");
+		progressBarSubLabelMBUF.setId("mbuf");
+		progressBarSubLabelMBUF.addClassNames(LumoUtility.TextColor.SECONDARY);
+		
+		progressBarMBUF.getElement().setAttribute("aria-describedby","mbuf");
+		
+		divMBUFUsage.setWidthFull();
+		divMBUFUsage.add(progressBarMBUF,progressBarSubLabelMBUF);
+		
+		vLayout.add(createKeyComponent("MBUF usage: ", divMBUFUsage, width, true));
+	}
+	
+	
+	private Component createKeyComponent(String name,Component component,String width,boolean isBorder) {
+		HorizontalLayout hLayoutKeyValue = new HorizontalLayout();
+
+		H5 header = new H5(name);
+		header.getStyle().setMargin("auto 0");
+		header.setWidth(width);
+		header.getStyle().setFlexShrink("0");
+
+
+		hLayoutKeyValue.add(header,component);
+		if(isBorder) {
+			hLayoutKeyValue.getStyle().setBorderBottom("1px solid rgb(214 214 216)");
+		}
+		hLayoutKeyValue.setWidthFull();
+		
+
+		return hLayoutKeyValue;
 	}
 
 	private Component createKeyValue(String name, String value, String width,boolean isBorder) {

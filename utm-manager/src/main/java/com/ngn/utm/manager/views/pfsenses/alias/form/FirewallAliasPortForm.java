@@ -9,8 +9,11 @@ import com.ngn.utm.manager.api.pfsenses.ApiResultPfsenseResponse;
 import com.ngn.utm.manager.api.pfsenses.alias.ApiAliasService;
 import com.ngn.utm.manager.api.pfsenses.alias.ApiReadFirewallAliasModel;
 import com.ngn.utm.manager.service.FormInterface;
-import com.ngn.utm.manager.utils.SessionUtil;
 import com.ngn.utm.manager.utils.commons.ButtonTemplate;
+import com.ngn.utm.manager.utils.commons.CantConnectToPfsenseForm;
+import com.ngn.utm.manager.utils.commons.ConfirmDialogTemplate;
+import com.ngn.utm.manager.utils.commons.DialogTemplate;
+import com.ngn.utm.manager.utils.commons.NotificationTemplate;
 import com.ngn.utm.manager.utils.commons.VerticalLayoutTemplate;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
@@ -23,7 +26,6 @@ public class FirewallAliasPortForm extends VerticalLayoutTemplate implements For
 	private static final long serialVersionUID = 1L;
 	private ApiAliasService apiAliasService;
 	
-	private boolean isConnect = SessionUtil.getDeviceInfo().isConnect();
 	private Grid<ApiReadFirewallAliasModel> grid = new Grid<ApiReadFirewallAliasModel>(ApiReadFirewallAliasModel.class,false);
 	private List<ApiReadFirewallAliasModel> listModel = new ArrayList<ApiReadFirewallAliasModel>();
 	private ButtonTemplate btnNew = new ButtonTemplate("Add",new SvgIcon(LineAwesomeIconUrl.PLUS_SOLID));
@@ -43,12 +45,13 @@ public class FirewallAliasPortForm extends VerticalLayoutTemplate implements For
 
 	@Override
 	public void configComponent() {
-		
+		btnNew.addClickListener(e->{
+			openDialogAddNew();
+		});
 	}
 	
 	public void loadData() {
 		listModel = new ArrayList<ApiReadFirewallAliasModel>();
-		if(isConnect) {
 			try {
 				ApiResultPfsenseResponse<List<ApiReadFirewallAliasModel>> data = apiAliasService.readFirewallAliases();
 				for(ApiReadFirewallAliasModel firewallAliasModel : data.getData()) {
@@ -57,14 +60,12 @@ public class FirewallAliasPortForm extends VerticalLayoutTemplate implements For
 					}
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
+				this.removeAll();
+				CantConnectToPfsenseForm cantConnectToPfsenseForm = new CantConnectToPfsenseForm();
+				this.add(cantConnectToPfsenseForm);
 			}
 			
 			grid.setItems(listModel);
-			
-		}else {
-			this.removeAll();
-		}
 	}
 	
 	private Component createGrid() {
@@ -83,8 +84,14 @@ public class FirewallAliasPortForm extends VerticalLayoutTemplate implements For
 		grid.addComponentColumn(model->{
 			HorizontalLayout hLayoutButton = new HorizontalLayout();
 			ButtonTemplate btnEdit = new ButtonTemplate("Edit",new SvgIcon(LineAwesomeIconUrl.EDIT));
+			btnEdit.addClickListener(e->{
+				openDialogUpdateAliases(model);
+			});
 			
 			ButtonTemplate btnDelete = new ButtonTemplate(new SvgIcon(LineAwesomeIconUrl.TRASH_ALT_SOLID));
+			btnDelete.addClickListener(e->{
+				openConfirmDelete(model.getName());
+			});
 			
 			hLayoutButton.add(btnEdit,btnDelete);
 			
@@ -94,6 +101,69 @@ public class FirewallAliasPortForm extends VerticalLayoutTemplate implements For
 		grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
 		
 		return grid;
+	}
+	
+	private void openConfirmDelete(String id) {
+		ConfirmDialogTemplate confirmDialogTemplate = new ConfirmDialogTemplate("Xóa");
+		confirmDialogTemplate.setText("Xác nhận xóa thông tin này");
+		confirmDialogTemplate.addConfirmListener(e->{
+			doDeleted(id);
+		});
+		
+		confirmDialogTemplate.open();
+		confirmDialogTemplate.setCancelable(true);
+	}
+	
+	private void doDeleted(String id) {
+		try {
+			ApiResultPfsenseResponse<Object> deleted = apiAliasService.deleteFirewallAlias(id);
+			if(deleted.isSuccess()) {
+				NotificationTemplate.success("Đã xóa thành công");
+				loadData();
+			}
+		} catch (Exception e) {
+			NotificationTemplate.error("Không thể xóa");
+		}
+	}
+	
+	private void openDialogAddNew() {
+		DialogTemplate dialogTemplate = new DialogTemplate("Add new");
+		FirewallAliasIpEditForm firewallAliasIpEditForm = new FirewallAliasIpEditForm(apiAliasService,null);
+		
+		firewallAliasIpEditForm.addChangeListener(e->{
+			dialogTemplate.close();
+			loadData();
+			NotificationTemplate.success("Thành công");
+		});
+		
+		dialogTemplate.getBtnSave().addClickListener(e->{
+			firewallAliasIpEditForm.save();
+		});
+		
+		dialogTemplate.add(firewallAliasIpEditForm);
+		dialogTemplate.setWidth("70%");
+		dialogTemplate.setHeightFull();
+		dialogTemplate.open();
+	}
+	
+	private void openDialogUpdateAliases(ApiReadFirewallAliasModel apiReadFirewallAliasModel) {
+		DialogTemplate dialogTemplate = new DialogTemplate("Add new");
+		FirewallAliasIpEditForm firewallAliasIpEditForm = new FirewallAliasIpEditForm(apiAliasService,apiReadFirewallAliasModel);
+		
+		firewallAliasIpEditForm.addChangeListener(e->{
+			dialogTemplate.close();
+			loadData();
+			NotificationTemplate.success("Thành công");
+		});
+		
+		dialogTemplate.getBtnSave().addClickListener(e->{
+			firewallAliasIpEditForm.save();
+		});
+		
+		dialogTemplate.add(firewallAliasIpEditForm);
+		dialogTemplate.setWidth("70%");
+		dialogTemplate.setHeightFull();
+		dialogTemplate.open();
 	}
 
 }

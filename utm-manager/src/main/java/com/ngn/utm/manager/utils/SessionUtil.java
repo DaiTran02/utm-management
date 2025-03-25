@@ -11,6 +11,7 @@ public class SessionUtil {
 	public static final String TOKEN = "TOKEN";
 	public static final String USER = "USER";
 	public static final String DEVICE_INFO = "DEVICE_INFO";
+	public static final String VERSION = "VERSION";
 	
 	public static void setToken(String token) {
 		try {
@@ -43,6 +44,20 @@ public class SessionUtil {
 		}
 	}
 	
+	public static void setVersion(String version) {
+		try {
+			getSession().setAttribute(VERSION, version);
+		} catch (Exception e) {
+		}
+	}
+	
+	public static String getVersion() {
+		try {
+			return (String) getSession().getAttribute(VERSION);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	public static WrappedSession getSession() {
 		return VaadinService.getCurrentRequest().getWrappedSession();

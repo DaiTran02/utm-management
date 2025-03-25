@@ -19,4 +19,10 @@ public class PropUtils {
         String apiUrl = getProperty("apiUrl");
         return apiUrl != null ? apiUrl : "";
     }
+    
+    public String getVersionUtm() {
+    	String utmVersion = getProperty("utm.version.api");
+    	return utmVersion != null ? utmVersion : "";
+    }
+    
 }

@@ -15,7 +15,7 @@ import okhttp3.OkHttpClient;
 
 public class OkhttpClientCustom {
 	public static OkHttpClient getClient() {
-		OkHttpClient client=new OkHttpClient().newBuilder().connectTimeout(5,TimeUnit.SECONDS).readTimeout(10,TimeUnit.SECONDS).build();
+		OkHttpClient client=new OkHttpClient().newBuilder().connectTimeout(30,TimeUnit.SECONDS).readTimeout(30,TimeUnit.SECONDS).build();
 		return client;
 	}
 

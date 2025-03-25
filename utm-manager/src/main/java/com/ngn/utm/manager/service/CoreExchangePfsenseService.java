@@ -9,6 +9,7 @@ import org.springframework.core.ParameterizedTypeReference;
 
 import com.ngn.utm.manager.api.ApiConvertUtil;
 import com.ngn.utm.manager.api.pfsenses.ApiAuthenticationPfsenseModel;
+import com.ngn.utm.manager.utils.PropUtils;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -18,6 +19,28 @@ import okhttp3.Response;
 import okio.BufferedSink;
 
 public class CoreExchangePfsenseService{
+	
+	private String version = "";
+	
+	public CoreExchangePfsenseService(PropUtils propUtils) {
+		this.version = propUtils.getVersionUtm();
+	}
+	
+	private String getAuthenVersion(ApiAuthenticationPfsenseModel ApiAuthenticationPfsenseModel) {
+		if(version.equals("v1")) {
+			return ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken();
+		}else {
+			return ApiAuthenticationPfsenseModel.getClientToken();
+		}
+	}
+	
+	private String getHeader() {
+		if(version.equals("v1")) {
+			return "Authorization";
+		}else {
+			return "X-API-Key";
+		}
+	}
 
 	private  OkHttpClient getHttpClient(String resourcePath) {
 		return OkhttpClientCustom.getUnsafeOkHttpClient();
@@ -25,11 +48,10 @@ public class CoreExchangePfsenseService{
 
 	public  <T> T get(String url,ApiAuthenticationPfsenseModel ApiAuthenticationPfsenseModel, ParameterizedTypeReference<T> responseType) throws Exception{
 		OkHttpClient client=getHttpClient(url);
-
 		Request request = new Request.Builder()
 				.url(url)
 				.method("GET", null)
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.build();
 		Response responseEntity = client.newCall(request).execute();
 		return ApiConvertUtil.jsonToModel(responseEntity.body().string(), responseType);
@@ -44,7 +66,7 @@ public class CoreExchangePfsenseService{
 		Request request = new Request.Builder()
 				.url(url)
 				.post(requestBody)
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.build();
 		Response responseEntity = client.newCall(request).execute();
 		return ApiConvertUtil.jsonToModel(responseEntity.body().string(),responseType);
@@ -74,7 +96,7 @@ public class CoreExchangePfsenseService{
 
 		Request request = new Request.Builder()
 				.url(url)
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.post(requestBody)
 				.build();
 		Response responseEntity = okHttpClient.newCall(request).execute();
@@ -90,7 +112,7 @@ public class CoreExchangePfsenseService{
 		Request request = new Request.Builder()
 				.url(url)
 				.put(requestBody)
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.build();
 		Response responseEntity = client.newCall(request).execute();
 		return ApiConvertUtil.jsonToModel(responseEntity.body().string(),responseType);
@@ -114,7 +136,7 @@ public class CoreExchangePfsenseService{
 
 		Request request = new Request.Builder()
 				.url(url)
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.put(requestBody)
 				.build();
 		Response responseEntity = okHttpClient.newCall(request).execute();
@@ -128,7 +150,7 @@ public class CoreExchangePfsenseService{
 		Request request = new Request.Builder()
 				.url(url)
 				.delete()
-				.addHeader("Authorization",ApiAuthenticationPfsenseModel.getClientId()+" "+ApiAuthenticationPfsenseModel.getClientToken())
+				.addHeader(getHeader(),getAuthenVersion(ApiAuthenticationPfsenseModel))
 				.build();
 		Response responseEntity = client.newCall(request).execute();
 		return ApiConvertUtil.jsonToModel(responseEntity.body().string(), responseType);

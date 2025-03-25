@@ -61,6 +61,7 @@ public class UserForm extends VerticalLayoutTemplate implements FormInterface{
 			this.removeAll();
 			CantConnectToPfsenseForm cantConnectToPfsenseForm = new CantConnectToPfsenseForm();
 			this.add(cantConnectToPfsenseForm);
+			e.printStackTrace();
 		}
 
 		grid.setItems(listModel);
